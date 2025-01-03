@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../../config/db_loader.php';
+require_once __DIR__ . '/../../Requests/formValidationRequest.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -9,34 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $surname = htmlspecialchars($_POST['surname']);
     $email = htmlspecialchars($_POST['email']);
     $password = htmlspecialchars($_POST['password']);
-
-    $_SESSION['old_input'] = [
-        'name' => $name,
-        'surname' => $surname,
-        'email' => $email,
-    ];
-
-    // Basic validation
-    if (empty($name) || empty($surname) || empty($email) || empty($password)) {
-        $_SESSION['error'] = "All fields are required.";
-        header("Location: /");
-        exit;
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['error'] = "Invalid email format.";
-        header("Location: /");
-        exit;
-    }
-
-    if (strlen($password) < 6) {
-        $_SESSION['error'] = "Password must be at least 6 characters long.";
-        header("Location: /");
-        exit;
-    }
-
-    // Hash the password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Get database configuration
     $dbConfig = getDbConfig();
@@ -51,27 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if email already exists
-    $emailCheckStmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    if (!$emailCheckStmt) {
-        $_SESSION['error'] = "Database error.";
-        header("Location: /");
-        exit;
-    }
+    // Validate input
+    validateInput($name, $surname, $email, $password, $conn);
 
-    $emailCheckStmt->bind_param("s", $email);
-    $emailCheckStmt->execute();
-    $emailCheckStmt->store_result();
-
-    if ($emailCheckStmt->num_rows > 0) {
-        $_SESSION['error'] = "Email already exists. Please use a different email.";
-        $emailCheckStmt->close();
-        $conn->close();
-        header("Location: /");
-        exit;
-    }
-
-    $emailCheckStmt->close();
+    // Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert data into users table
     $stmt = $conn->prepare("INSERT INTO users (name, surname, email, password) VALUES (?, ?, ?, ?)");
