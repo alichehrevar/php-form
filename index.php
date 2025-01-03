@@ -1,4 +1,0 @@
-<?php
-ob_start();
-
-require_once __DIR__ . '/routes/web.php';
