@@ -1,13 +1,8 @@
-<?php session_start(); ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up Form</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-</head>
-<body class="bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center min-h-screen">
+<?php
+session_start();
+$title = 'Sign Up Form';
+ob_start();
+?>
 <div class="bg-white flex flex-col p-8 rounded-2xl shadow-xl w-full max-w-md">
     <h2 class="text-3xl font-extrabold text-gray-800 text-center mb-8">Create Your Account</h2>
     <form id="signupForm" method="POST" action="/signup_process">
@@ -52,38 +47,13 @@
     </a>
 </div>
 
-<!-- Load Routes -->
-<?php require_once __DIR__ . '/../../routes/web.php'; ?>
+<!-- Script file -->
+<script src="/assets/js/js-validation.js"></script>
 
-<!-- Scripts -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="/frontend/assets/js/js-validation.js"></script>
-<script>
-    // Display Toast Messages
-    <?php if (isset($_SESSION['error'])): ?>
-    Toastify({
-        text: "<?php echo $_SESSION['error']; ?>",
-        duration: 3000,
-        gravity: "top",
-        position: "center",
-        backgroundColor: "red",
-        close: true,
-    }).showToast();
-    <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['success'])): ?>
-    Toastify({
-        text: "<?php echo $_SESSION['success']; ?>",
-        duration: 3000,
-        gravity: "top",
-        position: "center",
-        backgroundColor: "green",
-        close: true,
-    }).showToast();
-    <?php unset($_SESSION['success']); ?>
-    <?php endif; ?>
-</script>
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+$customScripts = [
+    '<script src="/assets/js/js-validation.js"></script>'
+];
+require __DIR__ . '/layouts/master.php';
+?>

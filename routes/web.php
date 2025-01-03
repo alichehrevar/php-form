@@ -14,7 +14,12 @@ switch ($requestUri) {
 
     case '/signup_process':
         // Serve the signup process
-        require_once __DIR__ . '/../backend/App/Http/Controllers/signup_process.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once __DIR__ . '/../backend/App/Http/Controllers/signup_process.php';
+        } else {
+            http_response_code(405);
+            echo "405 Method Not Allowed";
+        }
         break;
 
     default:

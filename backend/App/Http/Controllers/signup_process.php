@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check connection
     if ($conn->connect_error) {
-        $_SESSION['error'] = "Database connection failed.";
+        $_SESSION['error'] = "Server error!";
         header("Location: /");
         exit;
     }

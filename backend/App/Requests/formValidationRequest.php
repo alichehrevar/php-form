@@ -1,6 +1,5 @@
 <?php
 function validateInput($name, $surname, $email, $password, $conn) {
-    session_start();
 
     // Store old input in session
     $_SESSION['old_input'] = [
